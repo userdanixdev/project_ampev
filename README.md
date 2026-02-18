@@ -1,25 +1,22 @@
 # project_ampev
 
-📊 Projeto AMPEV – Pipeline de Ingestão com Azure Databricks
-🧠 Objetivo do Projeto
+## 📊 Projeto AMPEV – Pipeline de Ingestão com Azure Databricks
 
-Construir um pipeline de dados utilizando Azure Databricks + Unity Catalog + Auto Loader, realizando ingestão incremental de arquivos CSV para a camada Bronze dentro de uma arquitetura de Data Lakehouse.
+### 🧭 Executive Summary:
 
-O pipeline:
+Este projeto implementa um pipeline de ingestão incremental utilizando Azure Databricks, Unity Catalog e Delta Lake, seguindo a arquitetura Medallion (Bronze → Silver → Gold).
 
-Lê arquivos CSV depositados em um Volume
+A camada Bronze já está totalmente operacional, com:
 
-Processa incrementalmente via Auto Loader (cloudFiles)
+- Ingestão incremental via Auto Loader (cloudFiles)
+- Governança com Unity Catalog
+- Controle de schema explícito
+- Metadados de ingestão
+- Execução automatizada via Jobs
+- Versionamento com GitHub (Databricks Repos)
 
-Grava dados em tabelas Delta no Unity Catalog
-
-Mantém controle via checkpoint
-
-Registra metadados de ingestão
-
-Pode ser executado via Job agendado
-
-🏗️ Arquitetura
+### 🏗️ Arquitetura:
+```
 Volumes (Landing Zone)
         ↓
 Auto Loader (cloudFiles)
@@ -27,15 +24,15 @@ Auto Loader (cloudFiles)
 Delta Tables (Bronze Layer - Unity Catalog)
         ↓
 (Silver Layer - futura etapa)
+```
 
-📁 Estrutura do Volume
+### 📁 Estrutura do Volume:
 
 Volume utilizado:
 
-/Volumes/ampev/bronze/landings
+> /Volumes/ampev/bronze/landings
 
-
-Estrutura organizada:
+**Estrutura organizada:**
 
 ```
 landings/
@@ -56,213 +53,155 @@ landings/
     └── pedidos/
 ```
 
-📦 Dados Ingeridos
-📄 estabelecimentos.csv
+## 📦 Dados Ingeridos
+ ### 📄 estabelecimentos.csv
 
-Colunas:
+| Campo             | Tipo   |
+| ----------------- | ------ |
+| Local             | String |
+| Email             | String |
+| EstabelecimentoID | Long   |
+| Telefone          | String |
 
-Local (string)
 
-Email (string)
+### 📄 pedidos.csv:
 
-EstabelecimentoID (long)
+| Campo              | Tipo                                |
+| ------------------ | ----------------------------------- |
+| PedidoID           | Long                                |
+| EstabelecimentoID  | Long                                |
+| Produto            | String                              |
+| quantidade_vendida | Long                                |
+| Preco_Unitario     | Double                              |
+| data_venda         | String (futura conversão para Date) |
 
-Telefone (string)
 
-📄 pedidos.csv
 
-Colunas:
+## ⚙️ Tecnologias Utilizadas:
 
-PedidoID (long)
+- Azure Databricks
+- Unity Catalog
+- Delta Lake
+- Auto Loader (cloudFiles)
+- GitHub (via Databricks Repos)
+- Jobs (Workflows)
 
-EstabelecimentoID (long)
+## 🔄 Estratégia de Ingestão:
 
-Produto (string)
+> Auto Loader separado por entidade:
 
-quantidade_vendida (long)
+- Cada entidade possui: 
+        - Pasta exclusiva
+        - SchemaLocation exclusivo
+        - Checkpoint exclusivo
+        - Tabela Delta exclusiva
 
-Preco_Unitario (double)
+```Isso evita mistura de dados e garante isolamento.```
 
-data_venda (string → convertido posteriormente)
-
-⚙️ Tecnologias Utilizadas
-
-Azure Databricks
-
-Unity Catalog
-
-Delta Lake
-
-Auto Loader (cloudFiles)
-
-GitHub (via Databricks Repos)
-
-Jobs (Workflows)
-
-🔄 Estratégia de Ingestão
-✔ Auto Loader separado por entidade
-
-Cada entidade possui:
-
-Pasta exclusiva
-
-SchemaLocation exclusivo
-
-Checkpoint exclusivo
-
-Tabela Delta exclusiva
-
-Isso evita mistura de dados e garante isolamento.
-
-✔ Schema congelado (bootstrap controlado)
+> Schema congelado (bootstrap controlado):
 
 Os schemas foram inferidos a partir de arquivos sample e posteriormente congelados usando StructType(...), garantindo:
 
-Controle de tipos
+- Controle de tipos
+- Estabilidade do pipeline
+- Evitar inferência automática incorreta
+- Permitir validação futura de mudanças de layout
 
-Estabilidade do pipeline
-
-Evitar inferência automática incorreta
-
-Permitir validação futura de mudanças de layout
-
-✔ Metadados de ingestão
+## Metadados de ingestão:
 
 Durante o writeStream são adicionadas colunas técnicas:
 
-_ingest_ts → timestamp da ingestão
+- ```_ingest_ts``` → timestamp da ingestão
+- ```_source_file``` → caminho do arquivo original (via _metadata.file_path)
 
-_source_file → caminho do arquivo original (via _metadata.file_path)
+### 🚀 Execução do Pipeline:
 
-🚀 Execução do Pipeline
+> Pipeline executado via Databricks Job agendado.
 
-O pipeline é executado via Databricks Job agendado.
-
+```
 Configuração recomendada:
-
 Trigger: Scheduled
-
 Frequência: a cada 10 minutos
-
 Trigger type: availableNow=True
+```
 
-Fluxo:
+> Fluxo:
 
-Arquivo é colocado na pasta landing
+- Arquivo é colocado na pasta landing
+- Job executa
+- Auto Loader processa apenas novos arquivos
+- Dados são gravados na Bronze
+- Job encerra
 
-Job executa
-
-Auto Loader processa apenas novos arquivos
-
-Dados são gravados na Bronze
-
-Job encerra
-
-🔐 Governança (Unity Catalog)
+## 🔐 Governança (Unity Catalog)
 
 As tabelas são criadas em:
 
-ampev.bronze.estabelecimentos
-ampev.bronze.pedidos
+ - ampev.bronze.estabelecimentos
+ - ampev.bronze.pedidos
+
+## 🔍 Auditoria do Pipeline:
+
+Foi implementado script de auditoria automática para validação de:
+
+- Existência da tabela
+- Quantidade de registros
+- Presença de metadados
+- Histórico Delta
+- Existência de checkpoint
 
 
-Validações possíveis:
-
-SHOW TABLES IN ampev.bronze;
-SELECT COUNT(*) FROM ampev.bronze.estabelecimentos;
-DESCRIBE HISTORY ampev.bronze.estabelecimentos;
-
-🔍 Auditoria do Pipeline
-
-Foi implementado script de auditoria automática que valida:
-
-Existência da tabela
-
-Quantidade de registros
-
-Presença de metadados
-
-Histórico Delta
-
-Existência de checkpoint
-
-Resultado final:
-
-PIPELINE OK
-
-
-ou
-
-PIPELINE FAIL
-
-🧪 Controle de Execução
+## 🧪 Controle de Execução:
 
 O pipeline não inicia se a pasta estiver vazia:
 
-has_files(path)
+> has_files(path)
 
+Isso evita:
 
-Evita:
+- Erros de inferência
+- Criação de checkpoint vazio
+- Execuções desnecessárias
 
-Erros de inferência
-
-Criação de checkpoint vazio
-
-Execuções desnecessárias
-
-🔄 Controle de Versionamento
+## 🔄 Controle de Versionamento:
 
 Integração via Databricks Repos:
 
-Repos/<usuario>/<repositorio>
+> Repos/<usuario>/<repositorio>
 
 
 Fluxo:
 
-Clone do repositório GitHub
+- Clone do repositório GitHub
+- Commit & Push via UI do Databricks
 
-Desenvolvimento dentro da pasta do repo
 
-Commit & Push via UI do Databricks
+## 📌 Boas Práticas Aplicadas:
 
-Job aponta para notebook dentro do Repo
+- Separação por entidade
+- Schema explícito
+- Uso de checkpoints dedicados
+- Uso de _metadata.file_path
+- Execução via Job
+- Estrutura padronizada de diretórios
+- Auditoria automatizada
 
-📌 Boas Práticas Aplicadas
+## 📈 Próximos Passos (Roadmap):
 
-Separação por entidade
+- Implementar camada Silver (join pedidos ↔ estabelecimentos)
+- Normalização de tipos (converter data_venda para DateType)
+- Implementar validação de qualidade (ex: quantidade_vendida > 0)
+- Adicionar monitoramento via alertas
+- Criar branch strategy (dev/main)
 
-Schema explícito
+## 🎯 Status Atual:
 
-Uso de checkpoints dedicados
-
-Uso de _metadata.file_path
-
-Execução via Job
-
-Estrutura padronizada de diretórios
-
-Auditoria automatizada
-
-📈 Próximos Passos (Roadmap)
-
-Implementar camada Silver (join pedidos ↔ estabelecimentos)
-
-Normalização de tipos (converter data_venda para DateType)
-
-Implementar validação de qualidade (ex: quantidade_vendida > 0)
-
-Adicionar monitoramento via alertas
-
-Criar branch strategy (dev/main)
-
-🎯 Status Atual
-
-✅ Volume criado
-✅ Estrutura organizada
-✅ Auto Loader configurado
-✅ Schema congelado
-✅ WriteStream configurado
-✅ Job configurado
-✅ Integração com Git funcionando
+- ✅ Volume criado
+- ✅ Estrutura organizada
+- ✅ Auto Loader configurado
+- ✅ Schema congelado
+- ✅ WriteStream configurado
+- ✅ Job configurado
+- ✅ Integração com Git funcionando
 
 Pipeline Bronze operacional.
