@@ -205,3 +205,32 @@ Fluxo:
 - ✅ Integração com Git funcionando
 
 Pipeline Bronze operacional.
+
+📈 Roadmap Estratégico
+🔹 Próxima Fase – Silver Layer
+
+Conversão data_venda para DateType
+
+Join entre pedidos e estabelecimentos
+
+Tratamento de dados inválidos
+
+Deduplicação
+
+🔹 Fase Gold
+
+KPIs
+
+Métricas agregadas
+
+Camada para BI / Power BI
+
+🔹 Melhorias Futuras
+
+Alertas automáticos
+
+Testes de qualidade de dados
+
+CI/CD com branches dev/main
+
+Monitoramento de SLA
