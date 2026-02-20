@@ -190,7 +190,6 @@ Fluxo:
 
 - Implementar camada Silver (join pedidos ↔ estabelecimentos)
 - Normalização de tipos (converter data_venda para DateType)
-- Adicionar monitoramento via alertas
 - Criar branch strategy (dev/main)
 
 ## 🎯 Status Atual:
@@ -205,9 +204,9 @@ Fluxo:
 
 Pipeline Bronze operacional.
 
-# 📦 Camada Silver — Implementação SCD Type 2
+## 📦 Camada Silver — Implementação SCD Type 2
 
-## 🎯 Objetivo
+### Objetivo
 
 Implementar controle de histórico (Slowly Changing Dimension Type 2) nas tabelas da camada Silver:
 
@@ -224,7 +223,7 @@ A solução garante:
 
 ---
 
-# 🏗 Arquitetura Geral
+### 🏗 Arquitetura Geral
 
 ```
 Bronze (raw ingest)
@@ -233,18 +232,17 @@ Staging (padronização + deduplicação + hash)
         ↓
 Silver SCD2 (Delta Lake)
 ```
-
 ---
 
-# 🏢 1️⃣ Dimensão — Estabelecimentos (SCD2)
+## 🏢 Tabela Dimensão — Estabelecimentos (SCD2)
 
-## 📌 Tabela
+### Tabela:
 
 ```sql
 ampev.silver.dim_estabelecimentos_scd2
 ```
 
-## 🔑 Chave de Negócio
+## 🔑 Chave de Negócio:
 
 ```
 EstabelecimentoID
@@ -308,9 +306,9 @@ Se `_attr_hash` for diferente:
 
 ---
 
-# 🧾 2️⃣ Fato — Pedidos (SCD2)
+## 🧾 Tabela Fato — Pedidos (SCD2)
 
-## 📌 Tabela
+### Tabela
 
 ```sql
 ampev.silver.fato_pedidos_scd2
@@ -324,7 +322,7 @@ ampev.silver.fato_pedidos_scd2
 
 ---
 
-## 🧱 Estrutura
+### 🧱 Estrutura:
 
 ```sql
 CREATE TABLE ampev.silver.fato_pedidos_scd2 (
@@ -348,10 +346,8 @@ CREATE TABLE ampev.silver.fato_pedidos_scd2 (
 )
 USING DELTA;
 ```
-
 ---
-
-## 🧹 Staging
+### 🧹 Staging
 
 - Tipagem correta
 - Conversão `data_venda` → DATE
@@ -387,9 +383,9 @@ Quando `_attr_hash` for diferente:
 
 ---
 
-# 🔍 Consultas de Histórico
+## 🔍 Consultas de Histórico
 
-## Estabelecimentos
+### Estabelecimentos
 
 ```sql
 SELECT *
@@ -398,7 +394,7 @@ WHERE EstabelecimentoID = 1
 ORDER BY start_date;
 ```
 
-## Pedidos
+### Pedidos
 
 ```sql
 SELECT *
@@ -407,15 +403,13 @@ WHERE PedidoID = 1
   AND EstabelecimentoID = 1
 ORDER BY start_date;
 ```
-
 ---
+## ⚙️ Decisões Técnicas
 
-# ⚙️ Decisões Técnicas
-
-### ✔ Uso de Hash
+### Uso de Hash
 Evita comparação coluna a coluna.
 
-### ✔ Data Sentinela
+### Data Sentinela
 `9999-12-31` representa registros vigentes.
 
 ### ✔ is_current
@@ -428,9 +422,12 @@ Permite:
 - Time Travel
 - Controle transacional
 
+### Versionamento via branch: DEV
+
+
 ---
 
-# 🚀 Benefícios
+### 🚀 Benefícios
 
 - Histórico completo
 - Auditoria Bronze → Silver
@@ -440,7 +437,7 @@ Permite:
 
 ---
 
-# 📌 Próximo Passo
+### 📌 Próximo Passo
 
 Camada Gold:
 - Fato consolidado
