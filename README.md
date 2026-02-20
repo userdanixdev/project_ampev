@@ -107,7 +107,7 @@ Os schemas foram inferidos a partir de arquivos sample e posteriormente congelad
 - Evitar inferência automática incorreta
 - Permitir validação futura de mudanças de layout
 
-## Metadados de ingestão:
+## Metadados de ingestão explícito:
 
 Durante o writeStream são adicionadas colunas técnicas:
 
@@ -190,7 +190,6 @@ Fluxo:
 
 - Implementar camada Silver (join pedidos ↔ estabelecimentos)
 - Normalização de tipos (converter data_venda para DateType)
-- Implementar validação de qualidade (ex: quantidade_vendida > 0)
 - Adicionar monitoramento via alertas
 - Criar branch strategy (dev/main)
 
