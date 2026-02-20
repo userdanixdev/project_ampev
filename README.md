@@ -53,7 +53,7 @@ landings/
     └── pedidos/
 ```
 
-## 📦 Dados Ingeridos
+### 📦 Dados Ingeridos
  ### 📄 estabelecimentos.csv
 
 | Campo             | Tipo   |
@@ -77,7 +77,7 @@ landings/
 
 
 
-## ⚙️ Tecnologias Utilizadas:
+### ⚙️ Tecnologias Utilizadas:
 
 - Azure Databricks
 - Unity Catalog
@@ -86,7 +86,7 @@ landings/
 - GitHub (via Databricks Repos)
 - Jobs (Workflows)
 
-## 🔄 Estratégia de Ingestão:
+### 🔄 Estratégia de Ingestão:
 
 > Auto Loader separado por entidade:
 
@@ -107,7 +107,7 @@ Os schemas foram inferidos a partir de arquivos sample e posteriormente congelad
 - Evitar inferência automática incorreta
 - Permitir validação futura de mudanças de layout
 
-## Metadados de ingestão explícito:
+### Metadados de ingestão explícito:
 
 Durante o writeStream são adicionadas colunas técnicas:
 
@@ -133,14 +133,14 @@ Trigger type: availableNow=True
 - Dados são gravados na Bronze
 - Job encerra
 
-## 🔐 Governança (Unity Catalog)
+### 🔐 Governança (Unity Catalog)
 
 As tabelas são criadas em:
 
  - ampev.bronze.estabelecimentos
  - ampev.bronze.pedidos
 
-## 🔍 Auditoria do Pipeline:
+### 🔍 Auditoria do Pipeline:
 
 Foi implementado script de auditoria automática para validação de:
 
@@ -151,7 +151,7 @@ Foi implementado script de auditoria automática para validação de:
 - Existência de checkpoint
 
 
-## 🧪 Controle de Execução:
+### 🧪 Controle de Execução:
 
 O pipeline não inicia se a pasta estiver vazia:
 
@@ -176,7 +176,7 @@ Fluxo:
 - Commit & Push via UI do Databricks
 
 
-## 📌 Boas Práticas Aplicadas:
+### 📌 Boas Práticas Aplicadas:
 
 - Separação por entidade
 - Schema explícito
@@ -186,13 +186,13 @@ Fluxo:
 - Estrutura padronizada de diretórios
 - Auditoria automatizada
 
-## 📈 Próximos Passos (Roadmap):
+### 📈 Próximos Passos (Roadmap):
 
-- Implementar camada Silver (join pedidos ↔ estabelecimentos)
+- Implementar camada Silver 
 - Normalização de tipos (converter data_venda para DateType)
 - Criar branch strategy (dev/main)
 
-## 🎯 Status Atual:
+### 🎯 Status Atual:
 
 - ✅ Volume criado
 - ✅ Estrutura organizada
@@ -204,7 +204,7 @@ Fluxo:
 
 Pipeline Bronze operacional.
 
-## 📦 Camada Silver — Implementação SCD Type 2
+### 📦 Camada Silver — Implementação SCD Type 2
 
 ### Objetivo
 
@@ -234,7 +234,7 @@ Silver SCD2 (Delta Lake)
 ```
 ---
 
-## 🏢 Tabela Dimensão — Estabelecimentos (SCD2)
+### 🏢 Tabela Dimensão — Estabelecimentos (SCD2)
 
 ### Tabela:
 
@@ -242,13 +242,13 @@ Silver SCD2 (Delta Lake)
 ampev.silver.dim_estabelecimentos_scd2
 ```
 
-## 🔑 Chave de Negócio:
+### 🔑 Chave de Negócio:
 
 ```
 EstabelecimentoID
 ```
 
-## 🧱 Estrutura
+### 🧱 Estrutura
 
 ```sql
 CREATE TABLE ampev.silver.dim_estabelecimentos_scd2 (
@@ -273,31 +273,34 @@ USING DELTA;
 
 ---
 
-## 🔄 Lógica SCD2 — Dimensão
+### 🔄 Lógica SCD2 — Dimensão
 
 ### 🆕 Novo Estabelecimento
+```
+Quando '_is_new' = TRUE, significa que o 'EstabelecimentoID' ainda não existe na dimensão (silver.dim_estabelecimentos_scd2).
+Ou seja, estamos lidando com um registro totalmente novo, e não com uma atualização.
+```
 
 - `_is_new = TRUE`
 - Insere nova linha:
-  - `start_date = current_date()`
-  - `end_date = 9999-12-31`
-  - `is_current = TRUE`
+  - `start_date = current_date()` -> Data em que o registro passa a ser válido
+  - `end_date = 9999-12-31` ->  -> Data futura simbólica indicando que o registro está ativo
+  - `is_current = TRUE` -> Indica que esta é a versão atual do estabelecimento
+
+> No caso de um novo estabelecimento não há histórico anterior. Ele já nasce como a versão vigente. Futuras alterações gerarão novas > > > versões, preservando essa original.  
 
 ---
 
 ### 🔁 Alteração de Atributo
 
-Se `_attr_hash` for diferente:
-
-1. Fecha versão atual:
-   - `end_date = current_date() - 1`
-   - `is_current = FALSE`
-
-2. Insere nova versão com dados atualizados.
-
+```
+Quando o '_attr_hash' é diferente, significa que algum atributo relevante do estabelecimento foi alterado (ex: nome, cidade, categoria, etc.). Nesse caso, não sobrescrevemos o registro antigo. Aplicamos a estratégia de SCD Type 2, preservando o histórico.
+Se `_attr_hash` for diferente fecha a versão atual:  - `end_date = current_date() - 1` e  - `is_current se torna 'FALSE'
+e insere nova versão com dados atualizados.
+```
 ---
 
-## 📊 Exemplo Histórico
+### 📊 Exemplo Histórico
 
 | EstabelecimentoID | Email | start_date | end_date | is_current |
 |------------------|--------|------------|----------|------------|
@@ -306,7 +309,7 @@ Se `_attr_hash` for diferente:
 
 ---
 
-## 🧾 Tabela Fato — Pedidos (SCD2)
+### 🧾 Tabela Fato — Pedidos (SCD2)
 
 ### Tabela
 
@@ -314,7 +317,7 @@ Se `_attr_hash` for diferente:
 ampev.silver.fato_pedidos_scd2
 ```
 
-## 🔑 Chave de Negócio (Composta)
+### 🔑 Chave de Negócio (Composta)
 
 ```
 (PedidoID, EstabelecimentoID)
@@ -349,10 +352,13 @@ USING DELTA;
 ---
 ### 🧹 Staging
 
-- Tipagem correta
+```A etapa de staging serve para deixar a fonte “pronta” antes de aplicar regras de negócio (ex: SCD2). Aqui a ideia é padronizar, limpar e criar colunas técnicas que facilitem o processamento.
+```
+
+- `Tipagem correta` -> Garanta que cada coluna esteja no tipo esperado (ex.: PedidoID/EstabelecimentoID como numérico, quantidade como inteiro/decimal, etc.). Isso evita erro de join, comparação, agregação e escrita.
 - Conversão `data_venda` → DATE
-- Deduplicação via `row_number()` com chave composta
-- Hash dos atributos
+- Deduplicação via `row_number()` com chave composta -> Como podem existir múltiplas versões do mesmo registro na Bronze (reprocessamento/ingestões), você mantém apenas a versão mais recente.
+- Hash dos atributos -> Crie um hash (ex.: _attr_hash) com os atributos de negócio relevantes (excluindo colunas técnicas) para detectar mudanças de forma simples. Se o hash não mudou → sem alteração real nos atributos. Se o hash mudou → houve alteração → dispara SCD2 (fechar versão antiga e criar nova)
 
 ---
 
@@ -360,17 +366,13 @@ USING DELTA;
 
 ### 🆕 Novo Pedido
 
-- Não existe na dimensão current
-- Inserido como versão vigente
+Um pedido é considerado novo quando a chave do registro não existe entre os registros vigentes (is_current = TRUE) da sua tabela fato SCD2 (ex.: silver.fato_pedidos_scd2). Então é inserido como versão vigente.
 
 ---
 
 ### 🔁 Pedido Alterado
 
-Quando `_attr_hash` for diferente:
-
-1. Fecha versão atual
-2. Insere nova versão
+> Quando `_attr_hash` for diferente para um registro novo. Ocorer a fecha automática da versão atual e insere nova versão
 
 ---
 
@@ -404,18 +406,23 @@ WHERE PedidoID = 1
 ORDER BY start_date;
 ```
 ---
-## ⚙️ Decisões Técnicas
+## ⚙️ Decisões Técnicas:
 
-### Uso de Hash
-Evita comparação coluna a coluna.
+### 🔐 Uso de Hash
+- Evita comparação coluna a coluna. Em vez de comparar cada atributo individualmente (nome, cidade, categoria, valor, etc.), geramos um hash (ex.: _attr_hash) a partir da concatenação dos atributos relevantes.
 
-### Data Sentinela
+**Como funciona na prática?**
+- Selecionamos apenas os atributos de negócio, concatenamos os valores (normalizados) e Aplicamos uma função de hash (ex.: sha2)
+- Dessa forma, armazenamos como '_attr_hash' em coluna. Se o hash mudou então houve alteração real nos dados → aplica SCD2
+- Se o hash é igual então nenhuma mudança relevante → não cria nova versão
+
+#### Data Sentinela
 `9999-12-31` representa registros vigentes.
 
-### ✔ is_current
+#### ✔ is_current
 Facilita filtros e melhora performance.
 
-### ✔ Delta Lake
+#### ✔ Delta Lake
 Permite:
 - MERGE
 - UPDATE
@@ -424,7 +431,9 @@ Permite:
 
 ### Versionamento via branch: DEV
 
-
+A branch dev representa o ambiente de desenvolvimento e testes do projeto.
+O propósito da `Branch dev` é desenvolver novas features (ex: nova lógica SCD2), testar transformações (Bronze → Silver → Gold)
+ajustar notebooks e Jobs do Databricks, validar performance e regras de qualidade. Ela funciona como um ambiente seguro, onde mudanças podem ser feitas sem impactar a produção.
 ---
 
 ### 🚀 Benefícios
