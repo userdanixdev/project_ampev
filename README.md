@@ -6,6 +6,20 @@
 
 Este projeto implementa um pipeline de ingestão incremental utilizando Azure Databricks, Unity Catalog e Delta Lake, seguindo a arquitetura Medallion (Bronze → Silver → Gold).
 
+#### Contexto de Negócio (AMPEV — Fabricantes de Bebidas)
+
+A AMPEV atua como fabricante e distribuidora de bebidas, atendendo uma rede de estabelecimentos clientes (varejo, atacado, bares, mercados e distribuidores regionais). No dia a dia, a gestão comercial precisa acompanhar demanda, desempenho de portfólio e concentração de receita para tomar decisões rápidas sobre produção, logística, negociação e estratégia de vendas.
+
+Dentro desse cenário, as áreas de Vendas, Comercial e Planejamento fazem perguntas recorrentes para entender:
+
+Quem são os principais clientes (para priorização de atendimento, condições comerciais e retenção);
+
+Quais produtos têm maior giro (para planejamento de estoque/produção e reposição);
+
+Quais produtos geram mais receita (para decisões de preço, mix, campanhas e margem).
+
+Essas análises precisam ser respondidas com base em dados confiáveis e padronizados, evitando divergências entre relatórios. Por isso, na arquitetura do lakehouse, a camada GOLD concentra as visões analíticas prontas para consumo (BI/relatórios), unificando os dados tratados na Silver em um modelo orientado ao negócio.
+
 A camada Bronze já está totalmente operacional, com:
 
 - Ingestão incremental via Auto Loader (cloudFiles)
