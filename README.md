@@ -205,102 +205,126 @@ Fluxo:
 
 Pipeline Bronze operacional.
 
-# 📦 Camada Silver — Fato Pedidos (SCD Type 2)
+# 📦 Camada Silver — Implementação SCD Type 2
 
-## 📌 Objetivo
+## 🎯 Objetivo
 
-Construir a tabela `ampev.silver.fato_pedidos_scd2` aplicando:
+Implementar controle de histórico (Slowly Changing Dimension Type 2) nas tabelas da camada Silver:
 
-- Padronização de schema
-- Tipagem correta
-- Deduplicação por ingestão
-- Controle de histórico via SCD Type 2
-- Chave composta (`PedidoID`, `EstabelecimentoID`)
-- Hash para detecção de mudanças
+- `ampev.silver.dim_estabelecimentos_scd2`
+- `ampev.silver.fato_pedidos_scd2`
 
----
+A solução garante:
 
-# 🏗 Arquitetura
-
-```
-Bronze (raw)
-    ↓
-Staging (deduplicação + padronização + hash)
-    ↓
-SCD2 (Delta Lake)
-```
+- Histórico completo de alterações
+- Rastreabilidade Bronze → Silver
+- Controle temporal
+- Comparação eficiente via hash
+- Compatibilidade com modelagem dimensional (Gold)
 
 ---
 
-# 🥉 Fonte Bronze
+# 🏗 Arquitetura Geral
 
-Tabela origem:
+```
+Bronze (raw ingest)
+        ↓
+Staging (padronização + deduplicação + hash)
+        ↓
+Silver SCD2 (Delta Lake)
+```
+
+---
+
+# 🏢 1️⃣ Dimensão — Estabelecimentos (SCD2)
+
+## 📌 Tabela
 
 ```sql
-ampev.bronze.pedidos
+ampev.silver.dim_estabelecimentos_scd2
 ```
 
-Contém:
-- Dados crus
-- Metadados de ingestão (`_ingest_ts`, `_source_file`)
-
----
-
-# 🧹 1. Staging (Padronização e Deduplicação)
-
-### ✔ Tipagem aplicada
-
-| Coluna | Tipo Final |
-|---------|------------|
-| PedidoID | BIGINT |
-| EstabelecimentoID | BIGINT |
-| Produto | STRING |
-| quantidade_vendida | BIGINT |
-| Preco_Unitario | DOUBLE |
-| data_venda | DATE |
-
----
-
-### ✔ Deduplicação
-
-Aplicado `row_number()` com janela:
-
-```python
-Window.partitionBy("PedidoID", "EstabelecimentoID")
-      .orderBy(F.col("_ingest_ts").desc())
-```
-
-Mantém apenas:
+## 🔑 Chave de Negócio
 
 ```
-_rn = 1 → versão mais recente por chave composta
+EstabelecimentoID
 ```
 
----
+## 🧱 Estrutura
 
-# 🔐 2. Hash de Atributos
+```sql
+CREATE TABLE ampev.silver.dim_estabelecimentos_scd2 (
+  surrogate_key BIGINT GENERATED ALWAYS AS IDENTITY,
 
-Criado `_attr_hash` com:
+  EstabelecimentoID BIGINT,
+  Local STRING,
+  Email STRING,
+  Telefone STRING,
 
-```python
-F.sha2(
-    F.concat_ws("||",
-        Produto,
-        quantidade_vendida,
-        Preco_Unitario,
-        data_venda
-    ),
-    256
+  start_date DATE,
+  end_date DATE,
+  is_current BOOLEAN,
+
+  _attr_hash STRING,
+  _bronze_ingest_ts TIMESTAMP,
+  _bronze_source_file STRING,
+  _silver_ts TIMESTAMP
 )
+USING DELTA;
 ```
-
-### 🎯 Objetivo
-
-Detectar alterações em qualquer atributo do pedido sem comparar coluna por coluna.
 
 ---
 
-# 🏛 3. Estrutura da Tabela SCD2
+## 🔄 Lógica SCD2 — Dimensão
+
+### 🆕 Novo Estabelecimento
+
+- `_is_new = TRUE`
+- Insere nova linha:
+  - `start_date = current_date()`
+  - `end_date = 9999-12-31`
+  - `is_current = TRUE`
+
+---
+
+### 🔁 Alteração de Atributo
+
+Se `_attr_hash` for diferente:
+
+1. Fecha versão atual:
+   - `end_date = current_date() - 1`
+   - `is_current = FALSE`
+
+2. Insere nova versão com dados atualizados.
+
+---
+
+## 📊 Exemplo Histórico
+
+| EstabelecimentoID | Email | start_date | end_date | is_current |
+|------------------|--------|------------|----------|------------|
+| 1 | antigo@email.com | 2026-02-01 | 2026-02-10 | FALSE |
+| 1 | novo@email.com   | 2026-02-11 | 9999-12-31 | TRUE |
+
+---
+
+# 🧾 2️⃣ Fato — Pedidos (SCD2)
+
+## 📌 Tabela
+
+```sql
+ampev.silver.fato_pedidos_scd2
+```
+
+## 🔑 Chave de Negócio (Composta)
+
+```
+(PedidoID, EstabelecimentoID)
+```
+
+---
+
+## 🧱 Estrutura
 
 ```sql
 CREATE TABLE ampev.silver.fato_pedidos_scd2 (
@@ -327,56 +351,54 @@ USING DELTA;
 
 ---
 
-# 🔄 4. Lógica SCD Type 2
+## 🧹 Staging
 
-## 📌 Chave Composta
-
-A chave de negócio é:
-
-```
-(PedidoID, EstabelecimentoID)
-```
+- Tipagem correta
+- Conversão `data_venda` → DATE
+- Deduplicação via `row_number()` com chave composta
+- Hash dos atributos
 
 ---
 
-## 🆕 Novos Registros
+## 🔄 Lógica SCD2 — Fato
 
-Quando não existe versão atual:
+### 🆕 Novo Pedido
 
-```
-_is_new = TRUE
-```
-
-→ Insere nova linha como:
-
-- `start_date = current_date()`
-- `end_date = 9999-12-31`
-- `is_current = TRUE`
+- Não existe na dimensão current
+- Inserido como versão vigente
 
 ---
 
-## 🔁 Registros Alterados
+### 🔁 Pedido Alterado
 
-Quando `_attr_hash` é diferente:
+Quando `_attr_hash` for diferente:
 
-1. Fecha versão atual:
-   - `end_date = current_date() - 1`
-   - `is_current = FALSE`
-
-2. Insere nova versão com novos atributos.
+1. Fecha versão atual
+2. Insere nova versão
 
 ---
 
-# 📊 Exemplo de Histórico
+## 📊 Exemplo Histórico
 
 | PedidoID | EstabelecimentoID | Produto | start_date | end_date | is_current |
-|-----------|------------------|----------|------------|----------|------------|
+|----------|------------------|----------|------------|----------|------------|
 | 1 | 1 | Cerveja | 2026-02-01 | 2026-02-10 | FALSE |
 | 1 | 1 | Cerveja Premium | 2026-02-11 | 9999-12-31 | TRUE |
 
 ---
 
-# 🔎 Consulta de Histórico
+# 🔍 Consultas de Histórico
+
+## Estabelecimentos
+
+```sql
+SELECT *
+FROM ampev.silver.dim_estabelecimentos_scd2
+WHERE EstabelecimentoID = 1
+ORDER BY start_date;
+```
+
+## Pedidos
 
 ```sql
 SELECT *
@@ -388,47 +410,49 @@ ORDER BY start_date;
 
 ---
 
-# 🚀 Benefícios da Implementação
+# ⚙️ Decisões Técnicas
 
-- Histórico completo de alterações
-- Rastreabilidade (bronze → silver)
-- Performance otimizada (comparação por hash)
-- Controle via `is_current`
-- Compatível com camadas Gold e Modelagem Dimensional
+### ✔ Uso de Hash
+Evita comparação coluna a coluna.
 
----
+### ✔ Data Sentinela
+`9999-12-31` representa registros vigentes.
 
-# ⚠ Considerações Técnicas
+### ✔ is_current
+Facilita filtros e melhora performance.
 
-### 1️⃣ Data Sentinela
-
-`9999-12-31` é utilizada como padrão para registros vigentes.
-
-### 2️⃣ Execução Diária
-
-A lógica assume carga diária.  
-Para cargas intradiárias recomenda-se uso de `TIMESTAMP`.
-
-### 3️⃣ Performance
-
-A comparação é feita apenas contra registros `is_current = TRUE`.
+### ✔ Delta Lake
+Permite:
+- MERGE
+- UPDATE
+- Time Travel
+- Controle transacional
 
 ---
 
-# 🧠 Conclusão
+# 🚀 Benefícios
 
-A implementação do SCD Type 2 na tabela fato permite:
-
-- Manter histórico completo
-- Evitar sobrescrita de dados
-- Garantir integridade temporal
-- Suportar análises históricas
+- Histórico completo
+- Auditoria Bronze → Silver
+- Performance otimizada
+- Compatível com modelagem dimensional
+- Pronto para camada Gold
 
 ---
 
-**Autor:** Projeto AMPEV  
+# 📌 Próximo Passo
+
+Camada Gold:
+- Fato consolidado
+- Join com dimensão SCD2
+- Métricas agregadas
+- Performance otimizada
+
+---
+
+**Projeto:** AMPEV  
 **Camada:** Silver  
-**Padrão:** Delta Lake + SCD Type 2
+**Padrão:** Delta Lake + SCD Type 2  
 
 📈 Roadmap Estratégico
 🔹 Próxima Fase – Silver Layer
