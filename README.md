@@ -1,4 +1,4 @@
-# project_ampev
+## project_ampev
 
 ## 📊 Projeto AMPEV – Pipeline de Ingestão com Azure Databricks
 
@@ -473,6 +473,216 @@ Camada Gold:
 **Projeto:** AMPEV  
 **Camada:** Silver  
 **Padrão:** Delta Lake + SCD Type 2  
+
+### 🥇 Camada GOLD — AMPEV Lakehouse
+#### 📌 Visão Geral
+
+A camada GOLD representa o nível analítico do Lakehouse da AMPEV – Fabricantes de Bebidas.
+
+Enquanto:
+
+- Bronze → Ingestão bruta (Auto Loader)
+
+- Silver → Dados tratados, tipados e com controle histórico (SCD Type 2)
+
+- Gold → Dados prontos para consumo de negócio (BI / relatórios / dashboards)
+
+> A GOLD consolida as informações através de joins entre Fato e Dimensão, aplicando regras de negócio e agregações para responder perguntas estratégicas do gerente comercial.
+
+### 🎯 Objetivo de Negócio
+
+A camada GOLD foi construída para responder às seguintes perguntas estratégicas:
+
+- Quais são as 5 empresas que mais compraram nossos produtos?
+- Quais são os 5 produtos mais vendidos?
+- Quais são os 5 produtos que mais geraram faturamento?
+
+Essas respostas suportam decisões relacionadas a planejamento de produção, estratégia comercial, gestão de clientes-chave, otimização de mix de produtos, negociação e retenção de grandes compradores.
+
+### 🏗 Arquitetura da GOLD
+
+A camada GOLD é construída a partir das tabelas SCD2 da Silver:
+
+> silver.fato_pedidos_scd2
+
+> silver.dim_estabelecimentos_scd2
+
+**Somente os registros vigentes (is_current = TRUE) são considerados nas análises atuais.**
+
+### 🔄 View Base Analítica
+> ampev.gold.vw_vendas_atual
+
+Responsável por:
+
+- Realizar o JOIN entre fato e dimensão
+- Calcular métricas (ex: valor_total)
+- Entregar dataset limpo para agregações
+
+**Estrutura lógica:**
+```
+FROM silver.fato_pedidos_scd2 p
+LEFT JOIN silver.dim_estabelecimentos_scd2 e
+  ON p.EstabelecimentoID = e.EstabelecimentoID
+ AND e.is_current = TRUE
+WHERE p.is_current = TRUE
+```
+> Métrica derivada:
+- valor_total = quantidade_vendida * Preco_Unitario
+
+### 📊 Views Analíticas (Top 5)
+#### 🏆 Top 5 Empresas que Mais Compraram
+
+Baseado em:
+
+- Soma de unidades vendidas
+- Soma de faturamento total
+
+Entrega:
+
+- Identificação dos principais clientes
+- Apoio à estratégia comercial
+
+### 🥤Top 5 Produtos Mais Vendidos
+
+Baseado em:
+
+Som>  de quantidade_vendida
+
+Entrega:
+
+- Identificação de produtos com maior giro
+- Suporte ao planejamento de estoque
+
+#### 💰 Top 5 Produtos com Maior Faturamento
+
+Baseado em:
+
+> Soma de valor_total
+
+Entrega:
+
+- Identificação dos produtos com maior impacto financeiro
+- Apoio a decisões de precificação
+
+#### 🧠 Decisão Técnica Importante
+```
+Uso de registros vigentes (is_current = TRUE)
+Como a Silver utiliza SCD Type 2, existem múltiplas versões históricas.
+A GOLD utiliza apenas `is_current = TRUE`
+Isso garante que as análises representem o estado atual do negócio.
+Caso seja necessário análise histórica, pode-se remover esse filtro e trabalhar com start_date e end_date.
+```
+
+### ⚙️ Boas Práticas Aplicadas
+
+- Separação clara entre camada histórica (Silver) e analítica (Gold)
+- Métricas calculadas na camada de consumo
+- Views reutilizáveis para BI
+
+**Estrutura pronta para integração com:**
+- Power BI
+- Databricks SQL Dashboard
+- Jobs agendados
+
+### 🚀 Resultado
+
+A camada GOLD transforma dados transacionais em insights estratégicos, permitindo que a AMPEV tenha:
+
+- Visão clara dos principais clientes
+- Controle sobre produtos de maior giro
+- Monitoramento do faturamento por produto
+- Base sólida para tomada de decisão
+
+### 📊 Dashboard Executivo — Databricks SQL
+
+> O Dashboard Executivo foi desenvolvido no Databricks SQL com o objetivo de transformar os dados consolidados na camada GOLD em insights visuais para tomada de decisão gerencial.
+
+Ele responde diretamente às principais perguntas do gerente da AMPEV:
+
+- Quais são as 5 empresas que mais compraram?
+- Quais são os 5 produtos mais vendidos?
+- Quais são os 5 produtos que mais geraram faturamento?
+
+### 🏗 Arquitetura do Dashboard
+
+Fonte de dados:
+```
+ampev.gold.vw_vendas_atual
+ampev.gold.top5_empresas_mais_compraram
+ampev.gold.top5_produtos_mais_vendidos
+ampev.gold.top5_produtos_maior_faturamento
+```
+
+Fluxo de dados:
+
+> Bronze → Silver (SCD2) → Gold (Views Analíticas) → Dashboard
+
+### 📈 Visualizações Implementadas
+- Top 5 Empresas por Faturamento
+- Tipo: Bar Chart
+- Métrica: ``total_faturamento``
+- Dimensão: estabelecimento
+
+> Objetivo: Identificar principais clientes da AMPEV
+
+- Top 5 Produtos Mais Vendidos
+- Tipo: Bar Chart
+- Métrica: ``total_unidades`` 
+- Dimensão: produto
+
+Ob> jetivo: Identificar produtos com maior giro
+
+- Top 5 Produtos por Faturamento:
+
+- Tipo: Bar Chart
+- Métrica: total_faturamento
+- Dimensão: produto
+
+> Objetivo: Identificar produtos com maior impacto financeiro
+
+- **KPIs (Cards Executivos)**
+```
+Total de Faturamento Geral
+Total de Unidades Vendidas
+Total de Pedidos
+```
+> Esses indicadores permitem visão rápida da performance comercial.
+
+### 🔄 Atualização dos Dados
+```
+O dashboard está conectado diretamente às views da camada GOLD.
+Sempre que a camada Bronze recebe novos dados, a Silver aplica transformação e SCD2 e a Gold recalcula as views
+O Dashboard reflete automaticamente os dados atualizados.
+```
+
+Pode ser configurado:
+
+Refresh manual
+Refresh agendado
+Integração com Databricks Jobs
+
+### 📦 Versionamento no GitHub
+
+O repositório inclui:
+
+```
+/dashboards/ampev_dashboard.json
+/docs/images/dashboard_top5_empresas.png
+/docs/images/dashboard_produtos.png
+```
+
+> JSON exportado do Databricks SQL Dashboard
+> Screenshots das visualizações
+> Documentação técnica
+
+```Isso garante reprodutibilidade e governança do projeto.```
+
+### 🚀 Valor Estratégico:
+
+O Dashboard Executivo transforma dados transacionais em uma visão clara dos principais clientes, controle sobre os produtos mais estratégicos e monitoramento contínuo de faturamento. Base confiável para decisões comerciais
+
+Ele representa a camada final de entrega do projeto Lakehouse da AMPEV, conectando engenharia de dados à estratégia de negócio.
+
 
 📈 Roadmap Estratégico
 🔹 Próxima Fase – Silver Layer

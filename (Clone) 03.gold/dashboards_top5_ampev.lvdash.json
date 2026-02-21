@@ -1,0 +1,616 @@
+{
+  "datasets": [
+    {
+      "name": "363adeeb",
+      "displayName": "Top Five Companies With Highest Purchase Volume",
+      "queryLines": [
+        "SELECT *\r\n",
+        "FROM ampev.gold.top5_empresas_mais_compraram;\r\n"
+      ],
+      "catalog": "ampev",
+      "schema": "gold"
+    },
+    {
+      "name": "b2ab1d3e",
+      "displayName": "top5_empresas_mais_compraram",
+      "queryLines": [
+        "SELECT * FROM ampev.gold.top5_empresas_mais_compraram"
+      ],
+      "catalog": "ampev",
+      "schema": "gold"
+    },
+    {
+      "name": "a024a5f5",
+      "displayName": "top5_produtos_mais_vendidos",
+      "queryLines": [
+        "SELECT * FROM ampev.gold.top5_produtos_mais_vendidos"
+      ],
+      "catalog": "ampev",
+      "schema": "gold"
+    },
+    {
+      "name": "825c2d71",
+      "displayName": "top5_produtos_maior_faturamento",
+      "queryLines": [
+        "SELECT * FROM ampev.gold.top5_produtos_maior_faturamento"
+      ],
+      "catalog": "ampev",
+      "schema": "gold"
+    }
+  ],
+  "pages": [
+    {
+      "name": "533797c6",
+      "displayName": "Global Filters",
+      "layout": [
+        {
+          "widget": {
+            "name": "d8d3b5b3",
+            "queries": [
+              {
+                "name": "dashboards/01f10ec860731b9c8a5435431c8d6d62/datasets/01f10ec8b09c176dad103d18d5deb44e_EstabelecimentoID",
+                "query": {
+                  "datasetName": "b2ab1d3e",
+                  "fields": [
+                    {
+                      "name": "EstabelecimentoID",
+                      "expression": "`EstabelecimentoID`"
+                    },
+                    {
+                      "name": "EstabelecimentoID_associativity",
+                      "expression": "COUNT_IF(`associative_filter_predicate_group`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              },
+              {
+                "name": "dashboards/01f10ec860731b9c8a5435431c8d6d62/datasets/01f10ec8b1e619169e28e16370fc987d_total_unidades",
+                "query": {
+                  "datasetName": "a024a5f5",
+                  "fields": [
+                    {
+                      "name": "total_unidades",
+                      "expression": "`total_unidades`"
+                    },
+                    {
+                      "name": "total_unidades_associativity",
+                      "expression": "COUNT_IF(`associative_filter_predicate_group`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              },
+              {
+                "name": "dashboards/01f10ec860731b9c8a5435431c8d6d62/datasets/01f10ec8b4391f8f8a4550338af2f6f6_total_faturamento",
+                "query": {
+                  "datasetName": "825c2d71",
+                  "fields": [
+                    {
+                      "name": "total_faturamento",
+                      "expression": "`total_faturamento`"
+                    },
+                    {
+                      "name": "total_faturamento_associativity",
+                      "expression": "COUNT_IF(`associative_filter_predicate_group`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true,
+                "showDescription": false
+              },
+              "widgetType": "filter-multi-select",
+              "encodings": {
+                "fields": [
+                  {
+                    "fieldName": "EstabelecimentoID",
+                    "queryName": "dashboards/01f10ec860731b9c8a5435431c8d6d62/datasets/01f10ec8b09c176dad103d18d5deb44e_EstabelecimentoID"
+                  },
+                  {
+                    "fieldName": "total_unidades",
+                    "queryName": "dashboards/01f10ec860731b9c8a5435431c8d6d62/datasets/01f10ec8b1e619169e28e16370fc987d_total_unidades"
+                  },
+                  {
+                    "fieldName": "total_faturamento",
+                    "queryName": "dashboards/01f10ec860731b9c8a5435431c8d6d62/datasets/01f10ec8b4391f8f8a4550338af2f6f6_total_faturamento"
+                  }
+                ]
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 0,
+            "width": 1,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "06eea695",
+            "queries": [
+              {
+                "name": "dashboards/01f10ec860731b9c8a5435431c8d6d62/datasets/01f10ec8b09c176dad103d18d5deb44e_EstabelecimentoID",
+                "query": {
+                  "datasetName": "b2ab1d3e",
+                  "fields": [
+                    {
+                      "name": "EstabelecimentoID",
+                      "expression": "`EstabelecimentoID`"
+                    },
+                    {
+                      "name": "EstabelecimentoID_associativity",
+                      "expression": "COUNT_IF(`associative_filter_predicate_group`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              },
+              {
+                "name": "dashboards/01f10ec860731b9c8a5435431c8d6d62/datasets/01f10ec8b1e619169e28e16370fc987d_total_unidades",
+                "query": {
+                  "datasetName": "a024a5f5",
+                  "fields": [
+                    {
+                      "name": "total_unidades",
+                      "expression": "`total_unidades`"
+                    },
+                    {
+                      "name": "total_unidades_associativity",
+                      "expression": "COUNT_IF(`associative_filter_predicate_group`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              },
+              {
+                "name": "dashboards/01f10ec860731b9c8a5435431c8d6d62/datasets/01f10ec8b4391f8f8a4550338af2f6f6_total_faturamento",
+                "query": {
+                  "datasetName": "825c2d71",
+                  "fields": [
+                    {
+                      "name": "total_faturamento",
+                      "expression": "`total_faturamento`"
+                    },
+                    {
+                      "name": "total_faturamento_associativity",
+                      "expression": "COUNT_IF(`associative_filter_predicate_group`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true
+              },
+              "widgetType": "filter-multi-select",
+              "encodings": {
+                "fields": [
+                  {
+                    "fieldName": "EstabelecimentoID",
+                    "queryName": "dashboards/01f10ec860731b9c8a5435431c8d6d62/datasets/01f10ec8b09c176dad103d18d5deb44e_EstabelecimentoID"
+                  },
+                  {
+                    "fieldName": "total_unidades",
+                    "queryName": "dashboards/01f10ec860731b9c8a5435431c8d6d62/datasets/01f10ec8b1e619169e28e16370fc987d_total_unidades"
+                  },
+                  {
+                    "fieldName": "total_faturamento",
+                    "queryName": "dashboards/01f10ec860731b9c8a5435431c8d6d62/datasets/01f10ec8b4391f8f8a4550338af2f6f6_total_faturamento"
+                  }
+                ]
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 2,
+            "width": 1,
+            "height": 2
+          }
+        }
+      ],
+      "pageType": "PAGE_TYPE_GLOBAL_FILTERS",
+      "layoutVersion": "GRID_V1"
+    },
+    {
+      "name": "a0f472fe",
+      "displayName": "produto_x_faturamento",
+      "layout": [
+        {
+          "widget": {
+            "name": "produtos-ampev-total-faturamento",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "825c2d71",
+                  "fields": [
+                    {
+                      "name": "sum(total_faturamento)",
+                      "expression": "SUM(`total_faturamento`)"
+                    },
+                    {
+                      "name": "produto",
+                      "expression": "`produto`"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "frame": {
+                "showTitle": true,
+                "title": "                                                                                     Produtos AMPEV x Total Faturamento",
+                "showDescription": false
+              },
+              "mark": {
+                "colors": [
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 2
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 2
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 3
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 4
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 5
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 6
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 7
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 8
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 9
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 10
+                  }
+                ]
+              },
+              "widgetType": "bar",
+              "encodings": {
+                "x": {
+                  "fieldName": "sum(total_faturamento)",
+                  "displayName": "Faturamento",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                },
+                "y": {
+                  "fieldName": "produto",
+                  "displayName": "Produtos-Ampev",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                },
+                "label": {
+                  "show": true,
+                  "text": {
+                    "fieldName": "sum(total_faturamento)",
+                    "displayName": "Faturamento"
+                  }
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 0,
+            "width": 12,
+            "height": 6
+          }
+        }
+      ],
+      "pageType": "PAGE_TYPE_CANVAS",
+      "layoutVersion": "GRID_V1"
+    },
+    {
+      "name": "ba6769dd",
+      "displayName": "produtos_mais_vendidos",
+      "layout": [
+        {
+          "widget": {
+            "name": "produtos-mais-vendidos-ampev",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "a024a5f5",
+                  "fields": [
+                    {
+                      "name": "produto",
+                      "expression": "`produto`"
+                    },
+                    {
+                      "name": "sum(total_unidades)",
+                      "expression": "SUM(`total_unidades`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "frame": {
+                "showTitle": true,
+                "title": "                                                                                       Produtos mais vendidos - AMPEV"
+              },
+              "mark": {
+                "colors": [
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 3
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 2
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 3
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 4
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 5
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 6
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 7
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 8
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 9
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 10
+                  }
+                ]
+              },
+              "widgetType": "bar",
+              "encodings": {
+                "x": {
+                  "fieldName": "produto",
+                  "displayName": "Mais vendidos",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                },
+                "y": {
+                  "fieldName": "sum(total_unidades)",
+                  "displayName": "Unidades mais vendidas",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                },
+                "label": {
+                  "show": true
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 0,
+            "width": 12,
+            "height": 6
+          }
+        }
+      ],
+      "pageType": "PAGE_TYPE_CANVAS",
+      "layoutVersion": "GRID_V1"
+    },
+    {
+      "name": "404ec62f",
+      "displayName": "faturamento_empresas",
+      "layout": [
+        {
+          "widget": {
+            "name": "empresas-que-mais-faturaram",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "b2ab1d3e",
+                  "fields": [
+                    {
+                      "name": "sum(total_unidades)",
+                      "expression": "SUM(`total_unidades`)"
+                    },
+                    {
+                      "name": "sum(total_faturamento)",
+                      "expression": "SUM(`total_faturamento`)"
+                    },
+                    {
+                      "name": "estabelecimento",
+                      "expression": "`estabelecimento`"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "mark": {
+                "colors": [
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 2
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 2
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 3
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 4
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 5
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 6
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 7
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 8
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 9
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 10
+                  }
+                ]
+              },
+              "frame": {
+                "showTitle": true,
+                "title": "                                                                                             Empresas que mais faturaram"
+              },
+              "widgetType": "funnel",
+              "encodings": {
+                "x": {
+                  "fieldName": "sum(total_faturamento)",
+                  "scale": {
+                    "type": "quantitative"
+                  },
+                  "format": {
+                    "type": "number-plain",
+                    "abbreviation": "compact",
+                    "decimalPlaces": {
+                      "type": "max",
+                      "places": 2
+                    },
+                    "significantFigures": {
+                      "type": "all"
+                    },
+                    "hideGroupSeparator": false
+                  },
+                  "displayName": "Total Faturamento"
+                },
+                "y": {
+                  "fieldName": "estabelecimento",
+                  "displayName": "__",
+                  "scale": {
+                    "type": "categorical",
+                    "sort": {
+                      "by": "x-reversed"
+                    }
+                  }
+                },
+                "extra": [
+                  {
+                    "fieldName": "sum(total_unidades)"
+                  }
+                ],
+                "label": {
+                  "show": true
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 0,
+            "width": 12,
+            "height": 6
+          }
+        }
+      ],
+      "pageType": "PAGE_TYPE_CANVAS",
+      "layoutVersion": "GRID_V1"
+    }
+  ],
+  "uiSettings": {
+    "theme": {
+      "canvasBackgroundColor": {
+        "light": "#FAFAFB",
+        "dark": "#1F272D"
+      },
+      "widgetBackgroundColor": {
+        "light": "#FFFFFF",
+        "dark": "#11171C"
+      },
+      "fontColor": {
+        "light": "#11171C",
+        "dark": "#E8ECF0"
+      },
+      "selectionColor": {
+        "light": "#2272B4",
+        "dark": "#8ACAFF"
+      },
+      "visualizationColors": [
+        "#077A9D",
+        "#FFAB00",
+        "#00A972",
+        "#FF3621",
+        "#8BCAE7",
+        "#AB4057",
+        "#99DDB4",
+        "#FCA4A1",
+        "#919191",
+        "#BF7080"
+      ],
+      "widgetHeaderAlignment": "LEFT"
+    },
+    "applyModeEnabled": false
+  }
+}
