@@ -36,6 +36,15 @@
       ],
       "catalog": "ampev",
       "schema": "gold"
+    },
+    {
+      "name": "efd01c79",
+      "displayName": "vw_vendas_atual",
+      "queryLines": [
+        "SELECT * FROM ampev.gold.vw_vendas_atual"
+      ],
+      "catalog": "ampev",
+      "schema": "gold"
     }
   ],
   "pages": [
@@ -572,6 +581,251 @@
             "y": 0,
             "width": 12,
             "height": 6
+          }
+        }
+      ],
+      "pageType": "PAGE_TYPE_CANVAS",
+      "layoutVersion": "GRID_V1"
+    },
+    {
+      "name": "cbff9f1a",
+      "displayName": "Vendas x Data",
+      "layout": [
+        {
+          "widget": {
+            "name": "quantidade-vendas-produtos-por-mes",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "efd01c79",
+                  "fields": [
+                    {
+                      "name": "countdistinct(produto)",
+                      "expression": "COUNT(DISTINCT `produto`)"
+                    },
+                    {
+                      "name": "monthly(data_venda)",
+                      "expression": "DATE_TRUNC(\"MONTH\", `data_venda`)"
+                    },
+                    {
+                      "name": "count(quantidade_vendida)",
+                      "expression": "COUNT(`quantidade_vendida`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "frame": {
+                "showTitle": true,
+                "title": "                                                                       Quantidade de vendas de produtos por mês"
+              },
+              "mark": {
+                "colors": [
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 7
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 2
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 3
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 4
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 5
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 6
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 7
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 8
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 9
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 10
+                  }
+                ]
+              },
+              "widgetType": "bar",
+              "encodings": {
+                "x": {
+                  "fieldName": "monthly(data_venda)",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                },
+                "y": {
+                  "fieldName": "count(quantidade_vendida)",
+                  "axis": {
+                    "title": "quantidade vendida"
+                  },
+                  "scale": {
+                    "type": "quantitative",
+                    "reverse": false
+                  }
+                },
+                "label": {
+                  "show": true
+                },
+                "extra": [
+                  {
+                    "fieldName": "countdistinct(produto)"
+                  }
+                ]
+              }
+            }
+          },
+          "position": {
+            "x": 1,
+            "y": 0,
+            "width": 11,
+            "height": 6
+          }
+        },
+        {
+          "widget": {
+            "name": "valor-de-vendas-mes",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "efd01c79",
+                  "fields": [
+                    {
+                      "name": "monthly(data_venda)",
+                      "expression": "DATE_TRUNC(\"MONTH\", `data_venda`)"
+                    },
+                    {
+                      "name": "sum(quantidade_vendida)",
+                      "expression": "SUM(`quantidade_vendida`)"
+                    }
+                  ],
+                  "disaggregated": false,
+                  "orders": [
+                    {
+                      "direction": "DESC",
+                      "expression": "DATE_TRUNC(\"MONTH\", `data_venda`)"
+                    }
+                  ]
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true,
+                "title": "Valor de vendas Mês",
+                "showDescription": false
+              },
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "sum(quantidade_vendida)",
+                  "format": {
+                    "type": "number-currency",
+                    "currencyCode": "BRL",
+                    "abbreviation": "none",
+                    "decimalPlaces": {
+                      "type": "exact",
+                      "places": 2
+                    },
+                    "significantFigures": {
+                      "type": "all"
+                    }
+                  }
+                },
+                "period": {
+                  "fieldName": "monthly(data_venda)"
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 8,
+            "y": 6,
+            "width": 4,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "total-anual",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "efd01c79",
+                  "fields": [
+                    {
+                      "name": "count(data_venda)",
+                      "expression": "COUNT(`data_venda`)"
+                    },
+                    {
+                      "name": "sum(valor_total)",
+                      "expression": "SUM(`valor_total`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true,
+                "title": "Total anual"
+              },
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "sum(valor_total)",
+                  "format": {
+                    "type": "number-plain",
+                    "abbreviation": "compact",
+                    "decimalPlaces": {
+                      "type": "all"
+                    },
+                    "significantFigures": {
+                      "type": "exact",
+                      "figures": 3
+                    }
+                  }
+                },
+                "target": {
+                  "fieldName": "count(data_venda)",
+                  "change": {
+                    "type": "percent"
+                  }
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 1,
+            "y": 6,
+            "width": 3,
+            "height": 2
           }
         }
       ],

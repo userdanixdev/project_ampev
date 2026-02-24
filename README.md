@@ -683,6 +683,18 @@ O Dashboard Executivo transforma dados transacionais em uma visão clara dos pri
 
 Ele representa a camada final de entrega do projeto Lakehouse da AMPEV, conectando engenharia de dados à estratégia de negócio.
 
+### 📊 Dashboard Executivo
+
+Dashboard criado no Databricks SQL com visualizações baseadas na camada GOLD.
+
+Inclui:
+- Top 5 Empresas por Faturamento
+- Top 5 Produtos por Volume
+- Top 5 Produtos por Receita
+
+
+Export disponível em /dashboards.
+
 
 📈 Roadmap Estratégico
 🔹 Próxima Fase – Silver Layer
@@ -710,5 +722,7 @@ Alertas automáticos
 Testes de qualidade de dados
 
 CI/CD com branches dev/main
+
+
 
 Monitoramento de SLA
