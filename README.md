@@ -453,12 +453,11 @@ Permite:
 - Controle transacional
 
 ### Versionamento via branch: DEV
-
+```
 A branch dev representa o ambiente de desenvolvimento e testes do projeto.
 O propósito da `Branch dev` é desenvolver novas features (ex: nova lógica SCD2), testar transformações (Bronze → Silver → Gold)
 ajustar notebooks e Jobs do Databricks, validar performance e regras de qualidade. Ela funciona como um ambiente seguro, onde mudanças podem ser feitas sem impactar a produção.
----
-
+```
 ### 🚀 Benefícios
 
 - Histórico completo
