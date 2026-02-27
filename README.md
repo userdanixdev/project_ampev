@@ -1,5 +1,14 @@
 ## project_ampev
 
+![Azure Databricks](https://img.shields.io/badge/Azure-Databricks-red?logo=databricks&logoColor=white)
+![Delta Lake](https://img.shields.io/badge/Delta-Lake-00ADD8?logo=databricks&logoColor=white)
+![Unity Catalog](https://img.shields.io/badge/Governance-Unity%20Catalog-blue)
+![Architecture](https://img.shields.io/badge/Architecture-Medallion%20(Bronze%20|%20Silver%20|%20Gold)-purple)
+![SCD Type 2](https://img.shields.io/badge/Data%20Model-SCD%20Type%202-orange)
+![Dashboard](https://img.shields.io/badge/BI-Databricks%20SQL-green)
+![Status](https://img.shields.io/badge/Status-Bronze%20%26%20Silver%20Operational-success)
+![License](https://img.shields.io/badge/License-MIT-lightgrey)
+
 ## 📊 Projeto AMPEV – Pipeline de Ingestão com Azure Databricks
 
 ### 🧭 Executive Summary:
