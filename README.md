@@ -703,34 +703,17 @@ Inclui:
 
 Export disponível em /dashboards.
 
+## 👤 Autor
 
-📈 Roadmap Estratégico
-🔹 Próxima Fase – Silver Layer
+**Daniel Martins França**  
 
-Conversão data_venda para DateType
+*Projeto desenvolvido com foco em **engenharia de dados**, aplicando boas práticas de ETL, versionamento de dados e arquitetura em camadas*
 
-Join entre pedidos e estabelecimentos
+---
 
-Tratamento de dados inválidos
+## 📬 Contato:
 
-Deduplicação
-
-🔹 Fase Gold
-
-KPIs
-
-Métricas agregadas
-
-Camada para BI / Power BI
-
-🔹 Melhorias Futuras
-
-Alertas automáticos
-
-Testes de qualidade de dados
-
-CI/CD com branches dev/main
+- 📧 Email: [f.daniel.m@gmail.com](mailto:f.daniel.m@gmail.com)  
+- 💼 LinkedIn: [www.linkedin.com/in/danixdev](https://www.linkedin.com/in/danixdev)  
 
 
-
-Monitoramento de SLA
