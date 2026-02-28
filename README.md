@@ -119,10 +119,10 @@ landings/
 > Auto Loader separado por entidade:
 
 - Cada entidade possui: 
-        - Pasta exclusiva
-        - SchemaLocation exclusivo
-        - Checkpoint exclusivo
-        - Tabela Delta exclusiva
+       - Pasta exclusiva
+       - SchemaLocation exclusivo
+       - Checkpoint exclusivo
+       - Tabela Delta exclusiva
 
 ```Isso evita mistura de dados e garante isolamento.```
 
