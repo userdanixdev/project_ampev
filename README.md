@@ -447,10 +447,10 @@ ORDER BY start_date;
 #### Data Sentinela
 `9999-12-31` representa registros vigentes.
 
-#### ✔ is_current
+#### is_current
 Facilita filtros e melhora performance.
 
-#### ✔ Delta Lake
+#### Delta Lake
 Permite:
 - MERGE
 - UPDATE
@@ -555,7 +555,7 @@ Entrega:
 
 Baseado em:
 
-Som>  de quantidade_vendida
+> Soma de quantidade_vendida
 
 Entrega:
 
