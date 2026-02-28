@@ -118,10 +118,10 @@ landings/
 > Auto Loader separado por entidade:
 
 - Cada entidade possui: 
-       - Pasta exclusiva
-       - SchemaLocation exclusivo
-       - Checkpoint exclusivo
-       - Tabela Delta exclusiva
+   - Pasta exclusiva
+   - SchemaLocation exclusivo
+   - Checkpoint exclusivo
+   - Tabela Delta exclusiva
 
 ```Isso evita mistura de dados e garante isolamento.```
 
@@ -147,9 +147,9 @@ Durante o writeStream são adicionadas colunas técnicas:
 
 ```
 Configuração recomendada:
-Trigger: Scheduled
-Frequência: a cada 10 minutos
-Trigger type: availableNow=True
+ - Trigger: Scheduled
+ - Frequência: quando o arquivo csv ficar pronto.
+ - Trigger type: availableNow=True
 ```
 
 > Fluxo:
@@ -177,30 +177,11 @@ Foi implementado script de auditoria automática para validação de:
 - Histórico Delta
 - Existência de checkpoint
 
-
-### 🧪 Controle de Execução:
-
-O pipeline não inicia se a pasta estiver vazia:
-
-> has_files(path)
-
-Isso evita:
-
-- Erros de inferência
-- Criação de checkpoint vazio
-- Execuções desnecessárias
-
 ## 🔄 Controle de Versionamento:
 
 Integração via Databricks Repos:
 
 > Repos/<usuario>/<repositorio>
-
-
-Fluxo:
-
-- Clone do repositório GitHub
-- Commit & Push via UI do Databricks
 
 
 ### 📌 Boas Práticas Aplicadas:
@@ -213,23 +194,17 @@ Fluxo:
 - Estrutura padronizada de diretórios
 - Auditoria automatizada
 
-### 📈 Próximos Passos (Roadmap):
-
-- Implementar camada Silver 
-- Normalização de tipos (converter data_venda para DateType)
-- Criar branch strategy (dev/main)
-
 ### 🎯 Status Atual:
 
-- ✅ Volume criado
-- ✅ Estrutura organizada
-- ✅ Auto Loader configurado
-- ✅ Schema congelado
-- ✅ WriteStream configurado
-- ✅ Job configurado
-- ✅ Integração com Git funcionando
+- Volume criado
+- Estrutura organizada
+- Auto Loader configurado
+- Schema congelado
+- WriteStream configurado
+- Job configurado
+- Integração com Git funcionando
 
-Pipeline Bronze operacional.
+**Pipeline Bronze operacional.**
 
 ### 📦 Camada Silver — Implementação SCD Type 2
 
@@ -472,16 +447,6 @@ ajustar notebooks e Jobs do Databricks, validar performance e regras de qualidad
 
 ---
 
-### 📌 Próximo Passo
-
-Camada Gold:
-- Fato consolidado
-- Join com dimensão SCD2
-- Métricas agregadas
-- Performance otimizada
-
----
-
 ### 🥇 Camada GOLD — AMPEV Lakehouse
 #### 📌 Visão Geral
 
@@ -524,7 +489,6 @@ Responsável por:
 
 - Realizar o JOIN entre fato e dimensão
 - Calcular métricas (ex: valor_total)
-- Entregar dataset limpo para agregações
 
 **Estrutura lógica:**
 ```
@@ -588,6 +552,7 @@ Caso seja necessário análise histórica, pode-se remover esse filtro e trabalh
 - Views reutilizáveis para BI
 
 **Estrutura pronta para integração com:**
+
 - Power BI
 - Databricks SQL Dashboard
 - Jobs agendados
@@ -626,6 +591,7 @@ Fluxo de dados:
 > Bronze → Silver (SCD2) → Gold (Views Analíticas) → Dashboard
 
 ### 📈 Visualizações Implementadas
+
 - Top 5 Empresas por Faturamento
 - Tipo: Bar Chart
 - Métrica: ``total_faturamento``
@@ -638,7 +604,7 @@ Fluxo de dados:
 - Métrica: ``total_unidades`` 
 - Dimensão: produto
 
-Ob> jetivo: Identificar produtos com maior giro
+> Objetivo: Identificar produtos com maior giro
 
 - Top 5 Produtos por Faturamento:
 
@@ -674,7 +640,7 @@ Integração com Databricks Jobs
 O repositório inclui:
 
 ```
-/dashboards/ampev_dashboard.json
+/docs/ampev_dashboard.json
 /docs/images/dashboard_top5_empresas.png
 /docs/images/dashboard_produtos.png
 ```
