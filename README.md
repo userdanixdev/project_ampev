@@ -46,8 +46,13 @@ Auto Loader (cloudFiles)
         ↓
 Delta Tables (Bronze Layer - Unity Catalog)
         ↓
-(Silver Layer - futura etapa)
+(Silver Layer ) ( SDC Type 02)
+        ↓
+( Gold Layer ) ( Analytics )
+
 ```
+
+![Diagrama do projeto](docs/arquitetura_project_ampev.png)
 
 ### 📁 Estrutura do Volume:
 
