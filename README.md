@@ -483,10 +483,6 @@ Camada Gold:
 
 ---
 
-**Projeto:** AMPEV  
-**Camada:** Silver  
-**Padrão:** Delta Lake + SCD Type 2  
-
 ### 🥇 Camada GOLD — AMPEV Lakehouse
 #### 📌 Visão Geral
 
