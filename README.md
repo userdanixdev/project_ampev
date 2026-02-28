@@ -37,6 +37,7 @@ A camada Bronze já está totalmente operacional, com:
 - Versionamento com GitHub (Databricks Repos)
 
 ### 🏗️ Arquitetura:
+**Ambiente Cloud**:
 ```
 Volumes (Landing Zone)
         ↓
