@@ -21,11 +21,9 @@ A AMPEV atua como fabricante e distribuidora de bebidas, atendendo uma rede de e
 
 Dentro desse cenário, as áreas de Vendas, Comercial e Planejamento fazem perguntas recorrentes para entender:
 
-Quem são os principais clientes (para priorização de atendimento, condições comerciais e retenção);
-
-Quais produtos têm maior giro (para planejamento de estoque/produção e reposição);
-
-Quais produtos geram mais receita (para decisões de preço, mix, campanhas e margem).
+- Quem são os principais clientes (para priorização de atendimento, condições comerciais e retenção);
+- Quais produtos têm maior giro (para planejamento de estoque/produção e reposição);
+- Quais produtos geram mais receita (para decisões de preço, mix, campanhas e margem).
 
 Essas análises precisam ser respondidas com base em dados confiáveis e padronizados, evitando divergências entre relatórios. Por isso, na arquitetura do lakehouse, a camada GOLD concentra as visões analíticas prontas para consumo (BI/relatórios), unificando os dados tratados na Silver em um modelo orientado ao negócio.
 
