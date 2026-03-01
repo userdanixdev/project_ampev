@@ -677,6 +677,12 @@ Inclui:
 
 Export disponível em /dashboards.
 
+## 📑 Relatório Gerencial
+
+O relatório técnico-analítico completo do projeto pode ser acessado em:
+
+👉 [Download do Relatório Gerencial AMPEV](docs/relatorio_gerencial_ampev.pdf)
+
 ## 👤 Autor
 
 **Daniel Martins França**  
