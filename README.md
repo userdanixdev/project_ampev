@@ -13,7 +13,9 @@
 
 ### 🧭 Executive Summary:
 
-Este projeto implementa um pipeline de ingestão incremental utilizando Azure Databricks, Unity Catalog e Delta Lake, seguindo a arquitetura Medallion (Bronze → Silver → Gold).
+Este projeto implementa um pipeline de dados escalável de ponta a ponta utilizando Azure Databricks, Unity Catalog e Delta Lake, seguindo a arquitetura Medallion (Bronze → Silver → Gold).
+
+A solução garante ingestão incremental confiável, controle histórico por meio de SCD Type 2, governança de dados e disponibilização de conjuntos analíticos prontos para consumo, apoiando a tomada de decisão estratégica na área comercial.
 
 #### Contexto de Negócio (AMPEV — Fabricantes de Bebidas)
 
