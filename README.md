@@ -678,11 +678,17 @@ Inclui:
 Export disponível em /dashboards.
 
 ## 📑 Relatório Gerencial
+**Documentação Executiva**
+
+- Arquitetura Lakehouse
+- Modelagem Dimensional
+- Controle de Histórico (SCD Type 2)
+- Dashboards Analíticos
+
 
 O relatório técnico-analítico completo do projeto pode ser acessado em:
 
 👉 [Download do Relatório Gerencial AMPEV](docs/relatorio.pdf)
-
 
 
 ## 👤 Autor
