@@ -9,7 +9,7 @@
 ![Status](https://img.shields.io/badge/Status-Bronze%20%26%20Silver%20Operational-success)
 ![License](https://img.shields.io/badge/License-MIT-lightgrey)
 
-## 📊 Projeto AMPEV – Pipeline de Ingestão com Azure Databricks
+## 📊 Projeto AMPEV – Pipeline ETL end-to-end com Azure Databricks
 
 ### 🧭 Executive Summary:
 
