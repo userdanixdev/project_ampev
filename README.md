@@ -704,6 +704,7 @@ O relatório técnico-analítico completo do projeto pode ser acessado em:
 ## 📬 Contato:
 
 - 📧 Email: [f.daniel.m@gmail.com](mailto:f.daniel.m@gmail.com)  
-- 💼 LinkedIn: [www.linkedin.com/in/danixdev](https://www.linkedin.com/in/danixdev)  
+- 💼 LinkedIn: [www.linkedin.com/in/danixdev](https://www.linkedin.com/in/danixdev)
+- 💼 Notion: [https://lime-abacus-b63.notion.site/AMPEV-Data-Engineering-Case-Study-31655c22bf9a8057b05af4376ff1f920](https://lime-abacus-b63.notion.site/AMPEV-Data-Engineering-Case-Study-31655c22bf9a8057b05af4376ff1f920)
 
 
